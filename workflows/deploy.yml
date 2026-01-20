@@ -1,0 +1,49 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to server
+      run: |
+        # Prepare connection
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts        
+
+        echo "Uploading files to the server..."
+        apt update && apt install -y openssh-client rsync
+        rsync -avz --delete --exclude 'node_modules' --exclude 'dist' -e ssh . ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.SERVER_PROJECT_PATH }}/
+
+        echo "Running remote commands..."
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && cp .env.dist .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|NODE_ENV=.*|NODE_ENV=${{ secrets.NODE_ENV }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|DATABASE_USERNAME=.*|DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|DATABASE_PASSWORD=.*|DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|DATABASE_SERVER=.*|DATABASE_SERVER=${{ secrets.DATABASE_SERVER }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|DATABASE_NAME=.*|DATABASE_NAME=${{ secrets.DATABASE_NAME }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|JWT_ACCESS_SECRET=.*|JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|JWT_REFRESH_SECRET=.*|JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && sed -i \"s|FREELANCER_API_KEY=.*|FREELANCER_API_KEY=${{ secrets.FREELANCER_API_KEY }}|g\" .env"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && cp docker/.env.dist docker/.env"        
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && make docker-build-prod"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && docker exec freelancer_client_api_app npm install"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && docker exec freelancer_client_api_app npm run build"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && docker exec freelancer_client_api_app npm run migration:run"
+        
+        echo "Stopping any running application..."
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && docker exec freelancer_client_api_app pkill -f 'node dist/main' || true"
+        
+        echo "Starting application..."
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && docker exec -d freelancer_client_api_app npm run start:prod"
+        
+        echo "Deployment completed successfully!"

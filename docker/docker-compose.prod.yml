@@ -1,0 +1,18 @@
+
+services:
+  
+  app:
+    image: node:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_app
+    working_dir: ${COMPOSE_WORKING_DIR}
+    command: sleep infinity
+    ports:
+      - "3033:3000"
+    environment:
+      TZ: UTC
+      WORKING_DIR: ${COMPOSE_WORKING_DIR}
+      USER_ID: ${USER_ID}
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./../:${COMPOSE_WORKING_DIR}:rw,delegated
+
