@@ -6,7 +6,7 @@ services:
     working_dir: ${COMPOSE_WORKING_DIR}
     command: sleep infinity
     ports:
-      - "4200:4200"
+      - "5173:5173"
     environment:
       TZ: UTC
       WORKING_DIR: ${COMPOSE_WORKING_DIR}
