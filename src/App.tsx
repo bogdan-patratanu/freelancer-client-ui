@@ -10,14 +10,6 @@ import {
 } from "react-admin";
 import { Route } from "react-router-dom";
 import { dataProvider } from "./dataProvider";
-import PostList from "./pages/posts/post-list";
-import PostShow from "./pages/posts/post-show";
-import UserList from "./pages/users/user-lists";
-import PostEdit from "./pages/posts/post-edit";
-import PostCreate from "./pages/posts/post-create";
-
-import ArticleIcon from "@mui/icons-material/Article";
-import Person from "@mui/icons-material/Person";
 import HomePage from "./pages/homePage";
 import authProvider from "./authProvider";
 import polyglotI18nProvider from "ra-i18n-polyglot";
@@ -68,6 +60,7 @@ const App = () => {
       loginPage={Login}
       disableTelemetry
     >
+      <Resource name="projects" />
       {/* <Resource
         icon={ArticleIcon}
         name="posts"

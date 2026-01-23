@@ -26,9 +26,9 @@ import {
 import MobileGrid from "./mobileGrid";
 import { Project } from "../../types";
 
-const translate = useTranslate();
+// const translate = useTranslate();
 
-const storeKeyByStatus = {
+const storeKeyByDisplayType = {
   proximityHourly: "projects.list1",
   proximityFixed: "projects.list2",
   remoteHourly: "projects.list3",
@@ -37,25 +37,26 @@ const storeKeyByStatus = {
 };
 
 const tabs = [
-  { id: "proximityHourly", name: "proximityHourly" },
-  { id: "proximityFixed", name: "proximityFixed" },
-  { id: "remoteHourly", name: "remoteHourly" },
-  { id: "remoteFixed", name: "remoteFixed" },
+  { id: "proximityHourly", name: "proximity Hourly" },
+  { id: "proximityFixed", name: "proximity Fixed" },
+  { id: "remoteHourly", name: "remote Hourly" },
+  { id: "remoteFixed", name: "remote Fixed" },
   { id: "others", name: "others" },
 ];
 
 const EndingProjectsPage = () => {
   return (
     <List
-      filterDefaultValues={{ status: "ordered" }}
+      resource="projects"
+      filterDefaultValues={{ displayType: "proximityHourly" }}
       sort={{ field: "submitDate", order: "ASC" }}
-      perPage={25}
+      perPage={10}
       filters={projectsFilters}
       // actions={<ListActions />}
       // title={<OrdersTitle />}
-      queryOptions={{ meta: { embed: "customer" } }}
+      // queryOptions={{ meta: { embed: "customer" } }}
     >
-      <TabbedDatagrid />
+      <ProcessedTabbedDatagrid />
     </List>
   );
 };
@@ -72,19 +73,24 @@ const projectsFilters = [
   //         sx={{ minWidth: 200 }}
   //     />
   // </ReferenceInput>,
-  <DateInput
-    source="submitDate_gte"
-    parse={(d) => new Date(d).toISOString()}
-  />,
-  <DateInput
-    source="submitDate_lte"
-    parse={(d) => new Date(d).toISOString()}
-  />,
+  // <DateInput source="endDate_gte" parse={(d) => new Date(d).toISOString()} />,
+  // <DateInput source="endDate_lte" parse={(d) => new Date(d).toISOString()} />,
   // <NumberInput source="total_gte" />,
   // <NullableBooleanInput source="returned" />,
 ];
 
-const TabbedDatagrid = () => {
+const useProcessTableData = (data: Project[]): Project[] => {
+  return data.map(item => ({
+    ...item,
+    shortDescription: item.description ? item.description.substring(0, 50) : '',
+    // Add your other custom transformations here
+  }));
+};
+
+const ProcessedTabbedDatagrid = () => {
+  const { data } = useListContext<Project>();
+  const processedData = useProcessTableData(data || []);
+
   const listContext = useListContext();
   const { filterValues, setFilters, displayedFilters } = listContext;
   const isXSmall = useMediaQuery<Theme>((theme) =>
@@ -94,7 +100,7 @@ const TabbedDatagrid = () => {
   const handleChange = useCallback(
     (event: React.ChangeEvent<{}>, value: any) => {
       setFilters &&
-        setFilters({ ...filterValues, status: value }, displayedFilters);
+        setFilters({ ...filterValues, displayType: value }, displayedFilters);
     },
     [displayedFilters, filterValues, setFilters],
   );
@@ -104,7 +110,7 @@ const TabbedDatagrid = () => {
       <Tabs
         variant="fullWidth"
         centered
-        value={filterValues.status ?? "ordered"}
+        value={filterValues.displayType ?? "proximityHourly"}
         indicatorColor="primary"
         onChange={handleChange}
       >
@@ -113,15 +119,8 @@ const TabbedDatagrid = () => {
             key={choice.id}
             label={
               <span>
-                {choice.name} (
-                <Count
-                  filter={{
-                    ...filterValues,
-                    status: choice.name,
-                  }}
-                  sx={{ lineHeight: "inherit" }}
-                />
-                )
+                {choice.name} 
+                
               </span>
             }
             value={choice.id}
@@ -133,12 +132,13 @@ const TabbedDatagrid = () => {
         <MobileGrid />
       ) : (
         <>
-          {(filterValues.status == null ||
-            filterValues.status === "ordered") && (
-            <ProjectsTable storeKey={storeKeyByStatus.proximityHourly} />
+          {(filterValues.displayType == null ||
+            filterValues.displayType === "proximityHourly") && (
+            <ProjectsTable storeKey={storeKeyByDisplayType.proximityHourly} data={processedData} />
           )}
-          {filterValues.status === "delivered" && (
-            <ProjectsTable storeKey={storeKeyByStatus.proximityFixed}>
+
+          {filterValues.displayType === "delivered" && (
+            <ProjectsTable storeKey={storeKeyByDisplayType.proximityFixed} data={processedData}>
               <Column
                 field={BooleanField}
                 source="returned"
@@ -147,8 +147,9 @@ const TabbedDatagrid = () => {
               />
             </ProjectsTable>
           )}
-          {filterValues.status === "cancelled" && (
-            <ProjectsTable storeKey={storeKeyByStatus.others} />
+
+          {filterValues.displayType === "cancelled" && (
+            <ProjectsTable storeKey={storeKeyByDisplayType.others} data={processedData} />
           )}
         </>
       )}
@@ -159,52 +160,36 @@ const TabbedDatagrid = () => {
 const Column = DataTable.Col<Project>;
 const ColumnNumber = DataTable.NumberCol<Project>;
 
-const currencyStyle = {
-  style: "currency" as const,
-  currency: "USD",
-};
-
 const ProjectsTable = React.memo(
   ({
     storeKey,
+    data,
     children,
   }: {
     storeKey: string;
+    data: Project[];
     children?: React.ReactNode;
   }) => (
     <DataTable
-      rowClick="edit"
-      hiddenColumns={["total_ex_taxes", "delivery_fees", "taxes"]}
+      // rowClick="edit"
+      hiddenColumns={[]}
       storeKey={storeKey}
+      data={data}
     >
-      <Column source="date">
-        <DateField source="date" showTime />
+      <ColumnNumber source="id" />
+      <Column source="submitDate">
+        <DateField source="submitDate" showTime />
       </Column>
-      <Column source="reference" />
-      {/* FIXME: Sort by reference field does not work with ra-data-graphql */}
-      <Column
-        source="customer.last_name"
-        label="resources.orders.fields.customer_id"
-      >
-        {/* <CustomerReferenceField /> */}
-      </Column>
-      <Column label="resources.orders.fields.address">
-        <ReferenceField source="customer_id" reference="customers" link={false}>
-          {/* <AddressField /> */}
-        </ReferenceField>
-      </Column>
-      <ColumnNumber
-        source="basket.length"
-        label="resources.orders.fields.nb_items"
-      />
-      <ColumnNumber source="total_ex_taxes" options={currencyStyle} />
-      <ColumnNumber source="delivery_fees" options={currencyStyle} />
-      <ColumnNumber source="taxes" options={currencyStyle} />
-      <ColumnNumber
+
+      <ColumnNumber source="title" />
+      <ColumnNumber source="seoUrl" />
+      <ColumnNumber source="currency" />
+      <ColumnNumber source="shortDescription" />
+      {/* <ColumnNumber
         source="total"
         options={currencyStyle}
         sx={{ fontWeight: "bold" }}
-      />
+      /> */}
       {children}
     </DataTable>
   ),
