@@ -1,0 +1,37 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to server
+      run: |
+        # Prepare connection
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts        
+
+        echo "Uploading files to the server..."
+        apt update && apt install -y openssh-client rsync nodejs npm
+        npm install
+        
+        touch .env
+        echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
+        npm run build
+
+        rsync -avz --delete --exclude 'node_modules' -e ssh . ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.SERVER_PROJECT_PATH }}/
+        
+        echo "Running remote commands..."
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && cp docker/.env.dist docker/.env"        
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SERVER_PROJECT_PATH }} && make docker-build-prod"
+        
+        echo "Deployment completed successfully!"
