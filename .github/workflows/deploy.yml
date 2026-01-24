@@ -30,7 +30,7 @@ jobs:
         npm install
         
         touch .env
-        echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
+        echo "VITE_BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
         npm run build
 
         rsync -avz --delete --exclude 'node_modules' -e ssh . ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.SERVER_PROJECT_PATH }}/
