@@ -66,7 +66,7 @@ const EndingProjectsPage = () => {
   const handleUpdateProjects = async () => {
     try {
       const response = await fetch(
-        import.meta.env.VITE_JSON_SERVER_URL + "/projects/update-projects",
+        import.meta.env.BACKEND_URL + "/projects/update-projects",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
