@@ -4,8 +4,8 @@ services:
   app:
     container_name: ${COMPOSE_PROJECT_NAME}_app
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     ports:
       - "4543:443"
       - "8085:80"
