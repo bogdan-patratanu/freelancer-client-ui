@@ -1,18 +1,19 @@
 export type ThemeName = "light" | "dark";
 
-export type Project = {
+
+export interface Project {
   id: number;
+  submitDate: string;
+  ownerCountry: string;
+  type: string;
+  displayType: string;
   title: string;
-  description: string;
   seoUrl: string;
   currency: string;
-  submitDate: Date,
-  endDate: Date,
-  type: string,
-  bidPeriod: number,
-  
-};
-
+  description: string;
+  shortDescription?: string;
+  bidPeriod: number;
+}
 declare global {
   interface Window {
     restServer: any;
