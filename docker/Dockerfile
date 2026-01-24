@@ -4,4 +4,4 @@ RUN mkdir -p /etc/nginx/ssl && openssl req -x509 -nodes -days 3650 -subj "/C=CA/
 
 COPY /nginx.conf  /etc/nginx/conf.d/default.conf
 
-COPY ../dist /usr/share/nginx/html
+COPY dist /usr/share/nginx/html

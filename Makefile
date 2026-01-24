@@ -83,7 +83,7 @@ docker-build: docker-init ## Build Project docker image for development.
 
 .PHONY: docker-clean-prod
 docker-clean-prod: ## Safely remove PROD containers (preserves volumes)
-	docker-compose -f docker/docker-compose.prod.yml down --remove-orphans || true
+	docker compose -f docker/docker-compose.prod.yml down --remove-orphans || true
 
 .PHONY: docker-build-prod
 docker-build-prod: docker-init docker-clean-prod ## Build Project docker image for PROD environment.
