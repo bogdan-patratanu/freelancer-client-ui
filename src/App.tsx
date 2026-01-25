@@ -20,6 +20,7 @@ import NewProjectsPage from './pages/projects/new';
 import Layout from "./layout/Layout";
 import Login from "./layout/Login";
 import EndingProjectsPage from "./pages/projects/ending";
+import NotificationsPage from "./pages/notifications/page";
 
 const localStorage = localStorageStore(undefined, "freelance-client");
 
@@ -61,24 +62,10 @@ const App = () => {
       disableTelemetry
     >
       <Resource name="projects" />
-      {/* <Resource
-        icon={ArticleIcon}
-        name="posts"
-        list={PostList}
-        show={PostShow}
-        edit={PostEdit}
-        create={PostCreate}
-      />
-      <Resource
-        icon={Person}
-        name="users"
-        list={UserList}
-        show={ShowGuesser}
-        edit={EditGuesser}
-      /> */}
+      <Resource name="notifications" />
       <CustomRoutes>
-        <Route path="/projects/new" element={<NewProjectsPage />} />
-        <Route path="/projects/ending" element={<EndingProjectsPage />} />
+        <Route path="/projects" element={<EndingProjectsPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </CustomRoutes>
     </Admin>
   );
