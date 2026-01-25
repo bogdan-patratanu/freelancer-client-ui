@@ -14,6 +14,9 @@ const customEnglishMessages: TranslationMessages = {
         bids: {
             name: 'Bids',
         },
+        notifications: {
+            name: 'Notifications',
+        },
     },
 };
 

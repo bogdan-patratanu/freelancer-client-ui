@@ -14,12 +14,6 @@ import {
 } from "react-admin";
 import clsx from "clsx";
 
-// import visitors from '../visitors';
-// import orders from '../orders';
-// import invoices from '../invoices';
-// import products from '../products';
-// import categories from '../categories';
-// import reviews from '../reviews';
 import SubMenu from "./SubMenu";
 
 type MenuName = "menuProjects" | "menuInTheFuture";
@@ -54,7 +48,7 @@ const Menu = ({ dense = false }: MenuProps) => {
       })}
     >
       <DashboardMenuItem />
-      <SubMenu
+      {/* <SubMenu
         handleToggle={() => handleToggle("menuProjects")}
         isOpen={state.menuProjects}
         name="resources.projects.name"
@@ -79,12 +73,21 @@ const Menu = ({ dense = false }: MenuProps) => {
           leftIcon={<NewProjectsIcon />}
           dense={dense}
         />
-      </SubMenu>
+      </SubMenu> */}
 
       <MenuItemLink
-        to="/bids"
+        to="/projects"
         state={{ _scrollToTop: true }}
-        primaryText={translate(`resources.bids.name`, {
+        primaryText={translate(`resources.projects.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<ProjectsIcon />}
+        dense={dense}
+      />
+      <MenuItemLink
+        to="/notifications"
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.notifications.name`, {
           smart_count: 2,
         })}
         leftIcon={<BidsIcon />}

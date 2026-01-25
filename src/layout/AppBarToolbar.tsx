@@ -1,11 +1,15 @@
-import { LoadingIndicator, LocalesMenuButton } from 'react-admin';
+import { LoadingIndicator, LocalesMenuButton } from "react-admin";
+import { TasksCount } from "./TasksCount";
 
-import { ThemeSwapper } from '../themes/ThemeSwapper';
+import { ThemeSwapper } from "../themes/ThemeSwapper";
 
-export const AppBarToolbar = () => (
-    <>
-        <LocalesMenuButton />
-        <ThemeSwapper />
-        <LoadingIndicator />
-    </>
+const AppBarToolbar = () => (
+  <>
+    <TasksCount />
+    <LocalesMenuButton />
+    <ThemeSwapper />
+    <LoadingIndicator />
+  </>
 );
+
+export default AppBarToolbar;
