@@ -18,6 +18,15 @@ const customEnglishMessages: TranslationMessages = {
             name: 'Notifications',
         },
     },
+    ra: {
+        ...englishMessages.ra,
+        notification: {
+            ...englishMessages.ra?.notification,
+            use_update_many_ids_required: 'Error: useUpdateMany mutation requires an array of ids',
+            no_notifications_selected: 'No notifications selected',
+            notifications_marked_as_read: 'Notifications marked as read',
+        },
+    },
 };
 
 export default customEnglishMessages;
