@@ -32,6 +32,7 @@ const storeKeyByDisplayType = {
   remoteFixed: "projects.list4",
   othersHourly: "projects.list5",
   othersFixed: "projects.list6",
+  othersFixedSmall: "projects.list9",
 };
 
 const tabs = [
@@ -43,6 +44,7 @@ const tabs = [
   { id: "remoteFixed", name: "remote Fixed" },
   { id: "othersHourly", name: "others Hourly" },
   { id: "othersFixed", name: "others Fixed" },
+  { id: "othersFixedSmall", name: "others Fixed Small" },
 ];
 
 const exchangeRates: Record<string, number> = {
