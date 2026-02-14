@@ -17,6 +17,9 @@ const customEnglishMessages: TranslationMessages = {
         notifications: {
             name: 'Notifications',
         },
+        analytics: {
+            name: 'Analytics',
+        },
     },
     ra: {
         ...englishMessages.ra,

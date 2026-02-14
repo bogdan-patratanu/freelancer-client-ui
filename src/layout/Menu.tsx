@@ -5,6 +5,7 @@ import BidsIcon from "@mui/icons-material/Adb";
 import ProjectsIcon from "@mui/icons-material/FactCheck";
 import NewProjectsIcon from "@mui/icons-material/PendingActions";
 import EndingProjectsIcon from "@mui/icons-material/Surfing";
+import AnalyticsIcon from "@mui/icons-material/BarChart";
 import {
   useTranslate,
   DashboardMenuItem,
@@ -91,6 +92,15 @@ const Menu = ({ dense = false }: MenuProps) => {
           smart_count: 2,
         })}
         leftIcon={<BidsIcon />}
+        dense={dense}
+      />
+      <MenuItemLink
+        to="/analytics"
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.analytics.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<AnalyticsIcon />}
         dense={dense}
       />
     </Box>
