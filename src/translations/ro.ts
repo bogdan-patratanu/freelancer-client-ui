@@ -29,6 +29,9 @@ const customRomanianMessages: TranslationMessages = {
         notifications: {
             name: 'Notificări',
         },
+        analytics: {
+            name: 'Analitice',
+        },
     },
 };
 

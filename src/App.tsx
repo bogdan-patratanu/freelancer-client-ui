@@ -16,11 +16,11 @@ import polyglotI18nProvider from "ra-i18n-polyglot";
 import customEnglishMessages from "./translations/en";
 
 import { themes, ThemeName } from "./themes/themes";
-import NewProjectsPage from './pages/projects/new';
 import Layout from "./layout/Layout";
 import Login from "./layout/Login";
 import EndingProjectsPage from "./pages/projects/ending";
 import NotificationsPage from "./pages/notifications/page";
+import AnalyticsPage from "./pages/analytics/page";
 
 const localStorage = localStorageStore(undefined, "freelance-client");
 
@@ -63,9 +63,11 @@ const App = () => {
     >
       <Resource name="projects" />
       <Resource name="notifications" />
+      <Resource name="analytics" />
       <CustomRoutes>
         <Route path="/projects" element={<EndingProjectsPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
       </CustomRoutes>
     </Admin>
   );
