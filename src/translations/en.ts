@@ -11,6 +11,9 @@ const customEnglishMessages: TranslationMessages = {
             proximity_hourly: 'Proximity Hourly',
             proximity_fixed: 'Proximity Fixed',
         },
+        allProjects: {
+            name: 'All Projects',
+        },
         bids: {
             name: 'Bids',
         },

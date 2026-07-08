@@ -23,6 +23,9 @@ const customRomanianMessages: TranslationMessages = {
             proximity_hourly: 'Proximitate orară',
             proximity_fixed: 'Proximitate fixă',
         },
+        allProjects: {
+            name: 'Toate proiectele',
+        },
         bids: {
             name: 'Oferte',
         },

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Box } from "@mui/material";
 import BidsIcon from "@mui/icons-material/Adb";
 import ProjectsIcon from "@mui/icons-material/FactCheck";
+import AllProjectsIcon from "@mui/icons-material/Search";
 import NewProjectsIcon from "@mui/icons-material/PendingActions";
 import EndingProjectsIcon from "@mui/icons-material/Surfing";
 import AnalyticsIcon from "@mui/icons-material/BarChart";
@@ -83,6 +84,15 @@ const Menu = ({ dense = false }: MenuProps) => {
           smart_count: 2,
         })}
         leftIcon={<ProjectsIcon />}
+        dense={dense}
+      />
+      <MenuItemLink
+        to="/all-projects"
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.allProjects.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<AllProjectsIcon />}
         dense={dense}
       />
       <MenuItemLink

@@ -19,6 +19,8 @@ import { themes, ThemeName } from "./themes/themes";
 import Layout from "./layout/Layout";
 import Login from "./layout/Login";
 import EndingProjectsPage from "./pages/projects/ending";
+import AllProjectsPage from "./pages/projects/all";
+import ProjectShowPage from "./pages/projects/show";
 import NotificationsPage from "./pages/notifications/page";
 import AnalyticsPage from "./pages/analytics/page";
 
@@ -62,10 +64,13 @@ const App = () => {
       disableTelemetry
     >
       <Resource name="projects" />
+      <Resource name="allProjects" />
       <Resource name="notifications" />
       <Resource name="analytics" />
       <CustomRoutes>
         <Route path="/projects" element={<EndingProjectsPage />} />
+        <Route path="/all-projects" element={<AllProjectsPage />} />
+        <Route path="/all-projects/:id" element={<ProjectShowPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
       </CustomRoutes>
